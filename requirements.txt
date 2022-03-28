@@ -1,0 +1,9 @@
+caer
+numpy
+opencv-contrib-python
+pandas
+Pillow
+PyQt5
+imutils
+pymysql
+PIL

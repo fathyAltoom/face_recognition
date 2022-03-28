@@ -19,19 +19,11 @@ import numpy as np
 import pickle
 from PIL import Image
 
-face_casecade = cv.CascadeClassifier('cascades/data/haarcascade_frontalface_alt2.xml')
-recognizer = cv.face.LBPHFaceRecognizer_create()
-recognizer.read("trainner.yml")
 
-
-labels = {"person_name": 1 }
-with open("labels.pickle" , "rb") as f:
-	    org_labels = pickle.load(f)
-	    labels = {v:k for k,v in org_labels.items()}
-
-
+import pymysql
 
 face_casecade = cv.CascadeClassifier('cascades/data/haarcascade_frontalface_alt2.xml')
+
 
 class mainWindow(QDialog):
 	def __init__(self):
@@ -41,6 +33,14 @@ class mainWindow(QDialog):
 		self.add.clicked.connect(self.addScreen)
 		self.list.clicked.connect(self.listScreen)
 		self.start.released.connect(self.startVideo)
+		self.reset.clicked.connect(self.resetSys)
+		self.statuesButton.clicked.connect(self.statuesScreen)
+		
+
+		self.screen.clicked.connect(self.savePhoto)
+
+
+		
 
 
 		self.stateTable.setColumnWidth(0 , 50 )
@@ -54,8 +54,21 @@ class mainWindow(QDialog):
 	
 	
 	def startVideo(self):
-		cap =cv.VideoCapture("deheeh.mp4")
+
+
+		recognizer = cv.face.LBPHFaceRecognizer_create()
+		recognizer.read("trainner.yml")
+
+
+		labels = {"person_name": 1 }
+		with open("labels.pickle" , "rb") as f:
+		    org_labels = pickle.load(f)
+		    labels = {v:k for k,v in org_labels.items()}
+
+		cap =cv.VideoCapture("videos/yasser2.mp4")
 		row = 0
+		csv_writer = csv.writer(open('records.csv' , 'a') , delimiter=',')
+					
 		while(cap.isOpened()):
 		    self.img,self.image = cap.read()
 
@@ -98,6 +111,14 @@ class mainWindow(QDialog):
 			        self.stateTable.setItem(row , 0 , QTableWidgetItem(str(id_) ))
 			        self.stateTable.setItem(row , 1 , QTableWidgetItem( labels[id_]))
 			        self.stateTable.setItem(row , 2 , QTableWidgetItem(str(time.strftime("%Y-%b-%d at %H.%M.%S "))))
+			        csv_writer.writerow([id_ , labels[id_] , str(time.strftime("%Y-%b-%d at %H.%M.%S ")) ])
+		
+
+			        row = row + 1
+
+			        if row > 18 :
+			        	row = 0
+
 			        	
 
 		        	font = cv.FONT_HERSHEY_SIMPLEX
@@ -120,51 +141,37 @@ class mainWindow(QDialog):
 		        
 		        cv.rectangle(self.image , (x,y) , (x+w , y+h ) , (10 , 228 , 220) , 5 )
 
+		    self.update()  
+
+		    key = self.stopVideo() 
+		    if key == 0 :
+		    	cv.waitKey(-1)
 
 
-		    self.update()
-		    #cv.imshow("main",self.image)
 
-		        
-
-		        
-		  
-		    # self.setVideo(frame)
-
-
-		    
 		    if cv.waitKey(20) & 0xFF == ord('q'):
 		     break
 		 
 		cap.release()
 		cv.destroyAllWindows()
 
- 
 
-		        #print(x,y,w,h)    
-		        # roi_gray = gray[y:y+h , x:x+w]
-		        # roi_color = frame[y:y+h , x:x+w]
-		        
-		        ###predict the face
-		        # id_ ,conf = recognizer.predict(roi_gray)
-		        # if conf >=45 and conf <=85:
-		        #     print(id_)
-		        #     print(labels[id_])
-		        #     font = cv.FONT_HERSHEY_SIMPLEX
-		        #     name = labels[id_]
-		        #     color = (255,255,255)
-		        #     storke = 2
-		        #     cv.putText(frame , name ,(x,y) ,  font , 1 , color , storke , cv.LINE_AA)
-		            
-		        
-		        
-		        #for drow retangle
-		        # frame = cv2.cvtColor(image,cv2.COLOR_BGR2RGB)
-		        # image = QImage(frame,shape[1],frame.shape[0],frame.strides[0],QImage.Format_RGB888)
-		        # self.label_2.setPixmap(QtGui.QPixmap.fromImage(image))
+	def stopVideo(self):
+		key = 0
+		return key 
+
+	def resetSys(self):
+		self.state.setText("system is save")
+		self.state.setStyleSheet("background-color: rgb(70, 255, 138);\n" "color:rgb(255, 255, 255);\n"
+		        	 "font: 75 14pt \"MS Shell Dlg 2\";")
 
 
-		
+	def savePhoto(self):
+		self.fileName = 'snapshot'+str(time.strftime("%Y-%b-%d at %H.%M.%S "))+'.png'
+
+		cv.imwrite("./screenShot/"+self.fileName, self.tmp)
+		print("image saves as : " ,  self.fileName)
+   		
 
 
 	def setVideo(self , image):
@@ -178,33 +185,6 @@ class mainWindow(QDialog):
 		self.setVideo(self.image)
 
 
-	# def update(self):
- #        img = self.changeBrightness(self.image , self.brig_now)
- #        img = self.changeBlur(img , self.blur_now)
- #        # text = 'FBS :' + str(self.fps)
- #        # img = ps.putBText(img , text , text_offset_x = 20 , text_offset_y = 30 , vspace=20 , hspace=10,font_scale=1.0,background_RGB=(10,20,222) , text_RGB = (255,255,255) )
-
- #        self.setVideo(img)
-
-
-
- 
-
-    # def setVideo(self,image):
-    #     self.tmp=image
-    #     imahe = imutils.resize(image,width=640 , height=480)
-    #     frame = cv2.cvtColor(image,cv2.COLOR_BGR2RGB)
-    #     image = QImage(frame , frame.shape[1],frame.shape[0],frame.strides[0] , QImage.Format_RGB888 )
-    #     self.label.setPixmap(QtGui.QPixmap.fromImage(image))
-
-
-	# def setvideo(self,image):
- #         self.tmp=image
- #         imahe = imutils.resize(image,width=640 , height=480)
- #         frame = cv2.cvtColor(image,cv2.COLOR_BGR2RGB)
- #         image = QImage(frame , frame.shape[1],frame.shape[0],frame.strides[0] , QImage.Format_RGB888 )
- #         self.label_2.setPixmap(QtGui.QPixmap.fromImage(image))
-
 
 	def addScreen(self):
 		showAdd = Add()
@@ -214,6 +194,12 @@ class mainWindow(QDialog):
 	def listScreen(self):
 		showList = List()
 		widget.addWidget(showList)
+		widget.setCurrentIndex(widget.currentIndex()+1)
+
+
+	def statuesScreen(self):
+		show = Statues()
+		widget.addWidget(show)
 		widget.setCurrentIndex(widget.currentIndex()+1)
 
 
@@ -227,15 +213,16 @@ class Add(QDialog):
 
 
 		self.home.clicked.connect(self.backHome)
+		self.listScr.clicked.connect(self.listScreen)
+
+
 		self.save.clicked.connect(self.saveToFile)
 		self.train.clicked.connect(self.trainData)
+		self.takePicer.clicked.connect(self.takePic)
 		self.message.setText("")
 
 	
-	def backHome(self):
-		home =mainWindow()
-		widget.addWidget(home)
-		widget.setCurrentIndex(widget.currentIndex()+1)
+
 
 	def trainData(self):
 		
@@ -263,20 +250,17 @@ class Add(QDialog):
 		                
 		            id_ = label_ids[label]
 		            
-		           # print(label_ids)
-		            ##comare image to array
+		           
 		            pil_iamge = Image.open(path).convert("L") #gray scale
-		            
-		            #        size = (550 , 550)
-		            # final_iamage = pil_iamge.resize(size , Image.ANTIALIAS)
-		            # image_array = np.array(final_iamage , "uint8")
-		            
+		             
 		            
 		            image_array = np.array(pil_iamge , "uint8")
 		            
 		           # print( image_array)
 		            
-		            faces = face_casecade.detectMultiScale(image_array , scaleFactor=1.5 , minNeighbors= 5)
+		            faces = face_casecade.detectMultiScale(image_array , scaleFactor=1.5 , minNeighbors= 5 , 
+		     minSize = (80,80) , 
+                flags = cv.CASCADE_SCALE_IMAGE ) 
 		            
 		            for(x,y,w,h) in faces:
 		                roi = image_array[y:y+h , x:x+w]
@@ -292,81 +276,87 @@ class Add(QDialog):
 		self.message.setText("Train complete , press save to complete")
 
 
+	def takePic(self ):
+ 
 
-	def takePic():
+	        num_of_images = 0
+	        nakename = self.nakename.text()
+	        path = "./images/"+nakename
+	
+	        detector = cv.CascadeClassifier('cascades/data/haarcascade_frontalface_alt2.xml')
+	        try:
+	            os.makedirs(path)
+	        except:
+	            print('Directory Already Created , Change The Nake Name')
+	        vid = cv.VideoCapture("videos/yasser2.mp4")
+	        while True:
 
-		face_casecade = cv.CascadeClassifier('cascades/data/haarcascade_frontalface_alt2.xml')
-		# cap =cv.VideoCapture("http://192.168.43.52:8080/video")
-		cap =cv.VideoCapture(0)
-		i = 0
-		while True :
-		    rec , frame = cap.read()
-		    gray = cv.cvtColor(frame , cv.COLOR_RGB2GRAY)
-		    
-		    faces = face_casecade.detectMultiScale(gray , scaleFactor=1.5 , minNeighbors= 5)
-		    
+	            ret, img = vid.read()
+	            new_img = None
+	            grayimg = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
+	            face = detector.detectMultiScale(image=grayimg, scaleFactor=1.5, minNeighbors=5)
+	            for x, y, w, h in face:
+	                cv.rectangle(img, (x, y), (x+w, y+h), (0, 0, 0), 2)
+	                cv.putText(img, "Face Detected", (x, y-5), cv.FONT_HERSHEY_SIMPLEX, 0.8, (0, 0, 255))
+	                cv.putText(img, str(str(num_of_images)+" images captured"), (x, y+h+20), cv.FONT_HERSHEY_SIMPLEX, 0.8, (0, 0, 255))
+	                new_img = img[y:y+h, x:x+w]
+	            cv.imshow("FaceDetection", img)
+	            key = cv.waitKey(1) & 0xFF
 
-		    for (x,y,w,h) in faces:
-		        
-		        #print(x,y,w,h)    
-		        roi_gray = gray[y:y+h , x:x+w]
-		        roi_color = frame[y:y+h , x:x+w]
-		        
-		        #for drow retangle
-		        color = (255 , 0 , 0)
-		        storke = 2
-		        end_x = x+w
-		        end_y = y+h
-		        
-		        cv.rectangle(frame , (x,y) , (end_x , end_y) , color , storke)
-		        img_name = "img.jpg"
-		        cv.imwrite(img_name , roi_color)
-		        
-		        
-		    cv.imshow('frame' , frame)
-		    
-		    if cv.waitKey(20) & 0xFF == ord('q'):
-		     break 
-		 
-		cap.release()
-		cv.destroyAllWindows()
 
-		 
+	            try :
+	                cv.imwrite(str(path+"/"+str(num_of_images)+nakename+".jpg"), new_img)
+	                num_of_images += 1
+	            except :
+
+	                pass
+	            if key == ord("q") or key == 27 or num_of_images > 300:
+	                break
+	        cv.destroyAllWindows()
+	        self.messagebox("success", "taking picture Complete ")
+	        return num_of_images
 
 
 
 
 
 	def saveToFile(self):
-		id=self.id.text()
-		name=self.name.text()
-		description=self.description.text()
-		csv_writer = csv.writer(open('record.csv' , 'a') , delimiter=',')
-		csv_writer.writerow([id , name , description])
+	
+
+	        name = self.name.text()
+	        description = self.description.text()
+	        nakename = self.nakename.text()
+	        image = str(nakename+"/"+"0"+nakename+".jpg")
+	        insert = (nakename , name, description, image)
 
 
-		self.message.setText("data saved")
+	        con = pymysql.connect(db='face_recognition', user='root', passwd='', host='localhost', port=3306, autocommit=True)
+	        cur = con.cursor()
+	        sql = "INSERT INTO person (nakename , name, description, image) VALUES " + str(insert)
+	        data = cur.execute(sql)
+	        if(data):
+	        	
+	        	self.messagebox("success", "Data Saved")
+	            
+
+	        else:
+	            self.messagebox("fail", "Fail Load Data")
+
+	def messagebox(self, title, message):
+	        mess = QtWidgets.QMessageBox()
+	        mess.setWindowTitle(title)
+	        mess.setText(message)
+	        mess.setStandardButtons(QtWidgets.QMessageBox.Ok)
+	        mess.exec_()
+
+	        
+	def listScreen(self):
+		showList = List()
+		widget.addWidget(showList)
+		widget.setCurrentIndex(widget.currentIndex()+1)
 
 
-
-class List(QDialog):
-	def __init__(self):
-		super(List , self).__init__()
-		loadUi("list.ui" , self)
-
-		self.home.clicked.connect(self.backHome)
-
-		self.all_data = pd.read_csv("record.csv")
-
-		numRows = len(self.all_data.index)
-
-		self.tableWidget.setColumnCount(len(self.all_data.columns))
-		self.tableWidget.setRowCount(numRows)
-		self.tableWidget.setHorizontalHeaderLabels(self.all_data.columns)
-
-		for i in range(numRows):
-			for j in range(len(self.all_data.columns)):
-				self.tableWidget.setItem(i,j,QTableWidgetItem(str(self.all_data.iat[i,j])))
+	   	
 
 
 	
@@ -378,67 +368,200 @@ class List(QDialog):
 
 
 
-# def startVideo(self):
-
-# 	vid = cv2.VideoCapture(0)
-# 	cnt=0
-# 	frames_to_count=20
-# 	st=0
-# 	fbs=0
-
-#         # labels = {"person_name": 1 }
-#         # with open("labels.pickle" , "rb") as f:
-#         #    org_labels = pickle.load(f)
-#         #    labels = {v:k for k,v in org_labels.items()}
-# 	while(vid.isOpened()):
-	        	
-# 	            img,self.image = vid.read()
-# 	            self.image = imutils.resize(self.image , height = 480)
-
-# 	            gray = cv2.cvtColor(self.image , cv2.COLOR_BGR2GRAY)
-# 	            faces = face_casecade.detectMultiScale(gray , 
-# 	                scaleFactor = 1.15 ,
-# 	                minNeighbors = 7 , 
-# 	                minSize = (80,80) , 
-# 	                flags = cv2.CASCADE_SCALE_IMAGE)
-
-# 	            for(x,y,w,h) in faces:
-# 	                cv2.rectangle(self.image , (x,y) , (x+w , y+h ) , (10 , 228 , 220) , 5 )
-
-# 	                  #print(x,y,w,h)    
-# 	                roi_gray = gray[y:y+h , x:x+w]
-# 	                roi_color = self.image[y:y+h , x:x+w]
-	                
-# 	                ###predict the face
-# 	                # id_ ,conf = recognizer.predict(roi_gray)
-# 	                # if conf >=45 and conf <=85:
-# 	                #     print(id_)
-# 	                #     print(labels[id_])
-# 	                #     font = cv2.FONT_HERSHEY_SIMPLEX
-# 	                #     name = labels[id_]
-# 	                #     color = (255,255,255)
-# 	                #     storke = 2
-# 	                #     cv2.putText(self.image , name ,(x,y) ,  font , 1 , color , storke , cv2.LINE_AA)
-	              
 
 
-# 	                if cnt == frames_to_count:
-# 	                    try:  
-# 	                        print(frames_to_count/(time.time()-st))
 
-# 	                        st=time.time()
-# 	                        cnt=0
 
-# 	                    except:
-# 	                        pass
 
-# 	                cnt+=1
+class Statues(QDialog):
+	def __init__(self):
+		super(Statues , self).__init__()
+		loadUi("statues.ui" , self)
 
-# 	                if cv2.waitKey(20) & 0xFF == ord('q'):
-# 	                  break
-	             
+		self.home.clicked.connect(self.backHome)
+
+		self.showTable()
+
+		self.statTable.setColumnWidth(0 , 31 )
+		self.statTable.setColumnWidth(1 , 500 )
+		self.statTable.setColumnWidth(2 , 500 )
+
+	def backHome(self):
+		home =mainWindow()
+		widget.addWidget(home)
+		widget.setCurrentIndex(widget.currentIndex()+1)
+
+
+	def showTable(self ):
+
+				rows = 0
+
+				for row in csv.reader(open('records.csv' , 'r') , delimiter=','):
+					if len(row) > 0 :
+						# print(row[0]+' '+row[1]+' '+row[2])
+						rowPosition = self.statTable.rowCount()
+						
+						self.statTable.insertRow(rowPosition)
+
+						self.statTable.setItem(rowPosition , 0 , QTableWidgetItem(str(row[0]) ))
+						self.statTable.setItem(rowPosition , 1 , QTableWidgetItem(str(row[1]) ))
+						self.statTable.setItem(rowPosition , 2 , QTableWidgetItem(str(row[2]) ))
+				
+					# 	self.tableWidget.setItem(rowPosition , i  ,QtWidgets.QTableWidgetItem(str(column)))
+	 
+
+
+
+
+
+class List(QDialog):
+	def __init__(self):
+		super(List , self).__init__()
+		loadUi("list.ui" , self)
+
+		self.home.clicked.connect(self.backHome)
+		self.searchButton.clicked.connect(self.search)
+		self.reload.clicked.connect(self.getData)
+		self.deleteButton.clicked.connect(self.delete)
+		self.updateBUTTON.clicked.connect(self.update)
+
+		self.add.clicked.connect(self.addScreen)
+
+
+		self.tableWidget.setColumnWidth(0 , 50 )
+		self.tableWidget.setColumnWidth(1 , 100 )
+		self.tableWidget.setColumnWidth(2 , 100 )
+		self.tableWidget.setColumnWidth(3 , 263 )
+
+		self.getData()
+
+
+	# get dat from database
+	def getData(self):
+
+		db = pymysql.connect(db='face_recognition', user='root', passwd='', host='localhost', port=3306, autocommit=True)
+		cursor = db.cursor()
+		rows = cursor.execute("SELECT * FROM person ")
+		data = cursor.fetchall()
+		for row in data :
+			self.showTable(row)
+
+
+
+
+
+	def showTable(self , columns):
+
+			rowPosition = self.tableWidget.rowCount()
+			self.tableWidget.insertRow(rowPosition)
+
+			for i , column in enumerate(columns):
+				self.tableWidget.setItem(rowPosition , i  ,QtWidgets.QTableWidgetItem(str(column)))
+
+	def clearTable(self):
+
+		self.tableWidget.clear()
+		self.tableWidget.removeRow(1)
+
 
 			
+	def search(self):
+
+		id =self.userId.text()
+
+		db =  pymysql.connect(db='face_recognition', user='root', passwd='', host='localhost', port=3306, autocommit=True)
+
+		cursor = db.cursor()
+		cursor.execute("SELECT * FROM person WHERE id = '" + str(id) + "'")
+		data = cursor.fetchall()
+		if(data):
+			for tb in data :
+				id = tb[0]
+
+				self.userid.setText(""+str(tb[0]))
+				self.nakename.setText(""+tb[1])
+
+				self.username.setText(""+tb[2])
+				self.description.setText(""+tb[3])
+				image = "images/"+tb[4]
+			
+				self.personImage.setPixmap(QtGui.QPixmap(image))
+				self.personImage.setScaledContents(True)
+		
+
+		else :
+				self.userid.setText("")
+				self.nakename.setText("")
+				self.username.setText("")
+				self.description.setText("")	
+				self.personImage.setPixmap(QtGui.QPixmap("./assets/open-images.png"))
+				self.personImage.setScaledContents(True)
+
+				self.messagebox("INFO", "not found")
+
+
+	def delete(self):
+	        id = self.userid.text()
+	        con = pymysql.connect(db='face_recognition', user='root', passwd='', host='localhost', port=3306, autocommit=True)
+	        cur = con.cursor()
+	        sql = "DELETE FROM person WHERE id =%s"
+	        data = cur.execute(sql, (id))
+	        if(data):
+	            self.messagebox("success", "Data deleted successfully")
+	 
+
+	        else:
+	            self.messagebox("fail", "delete failed ")
+
+
+	def update(self):
+	        userid = self.userid.text()
+	        fullname = self.username.text()
+	        description = self.description.text()
+	        nakename = self.nakename.text()
+	
+	        con = pymysql.connect(db='face_recognition', user='root', passwd='', host='localhost', port=3306, autocommit=True)
+	        cur = con.cursor()
+	        sql = "UPDATE person SET name = %s, nakename=%s, description=%s WHERE id=%s"
+	        data = cur.execute(sql,(fullname, nakename, description, userid))
+	        if(data):
+	            self.messagebox("success", "Data updated successfully")
+	        else:
+	            self.messagebox("fail", "Fail update data")
+
+
+	        
+
+
+
+	
+	def backHome(self):
+		home =mainWindow()
+		widget.addWidget(home)
+		widget.setCurrentIndex(widget.currentIndex()+1)
+
+
+
+	def addScreen(self):
+		showAdd = Add()
+		widget.addWidget(showAdd)
+		widget.setCurrentIndex(widget.currentIndex()+1)
+
+
+
+
+
+
+
+	def messagebox(self, title, message):
+	        mess = QtWidgets.QMessageBox()
+	        mess.setWindowTitle(title)
+	        mess.setText(message)
+	        mess.setStandardButtons(QtWidgets.QMessageBox.Ok)
+	        mess.exec_()
+
+
+
 
     
 app = QtWidgets.QApplication(sys.argv)

@@ -13,32 +13,13 @@
   <property name="windowTitle">
    <string>add</string>
   </property>
-  <widget class="QLabel" name="label">
-   <property name="geometry">
-    <rect>
-     <x>-70</x>
-     <y>-10</y>
-     <width>831</width>
-     <height>141</height>
-    </rect>
-   </property>
-   <property name="styleSheet">
-    <string notr="true">font: 75 20pt &quot;MS Shell Dlg 2&quot;;</string>
-   </property>
-   <property name="text">
-    <string>Add new criminal</string>
-   </property>
-   <property name="alignment">
-    <set>Qt::AlignCenter</set>
-   </property>
-  </widget>
   <widget class="QFrame" name="frame">
    <property name="geometry">
     <rect>
-     <x>10</x>
-     <y>90</y>
-     <width>761</width>
-     <height>701</height>
+     <x>30</x>
+     <y>200</y>
+     <width>581</width>
+     <height>601</height>
     </rect>
    </property>
    <property name="frameShape">
@@ -47,75 +28,114 @@
    <property name="frameShadow">
     <enum>QFrame::Raised</enum>
    </property>
-   <widget class="QLineEdit" name="id">
+   <widget class="QLineEdit" name="nakename">
     <property name="geometry">
      <rect>
-      <x>180</x>
-      <y>10</y>
+      <x>10</x>
+      <y>0</y>
       <width>381</width>
       <height>51</height>
      </rect>
     </property>
     <property name="placeholderText">
-     <string>  Id</string>
+     <string>  nake name</string>
     </property>
    </widget>
    <widget class="QLineEdit" name="name">
     <property name="geometry">
      <rect>
-      <x>180</x>
+      <x>10</x>
       <y>70</y>
       <width>381</width>
       <height>51</height>
      </rect>
     </property>
     <property name="placeholderText">
-     <string>  Name</string>
+     <string>  full name</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="take">
+   <widget class="QPushButton" name="takePicer">
     <property name="geometry">
      <rect>
-      <x>180</x>
-      <y>200</y>
+      <x>10</x>
+      <y>190</y>
       <width>181</width>
       <height>71</height>
      </rect>
     </property>
     <property name="text">
-     <string>Take Picture</string>
+     <string/>
+    </property>
+    <property name="icon">
+     <iconset>
+      <normaloff>assets/camera.png</normaloff>assets/camera.png</iconset>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>70</width>
+      <height>70</height>
+     </size>
+    </property>
+    <property name="autoDefault">
+     <bool>false</bool>
     </property>
    </widget>
    <widget class="QPushButton" name="train">
     <property name="geometry">
      <rect>
-      <x>380</x>
-      <y>200</y>
+      <x>210</x>
+      <y>190</y>
       <width>181</width>
       <height>71</height>
      </rect>
     </property>
     <property name="text">
-     <string>Train</string>
+     <string/>
+    </property>
+    <property name="icon">
+     <iconset>
+      <normaloff>assets/process.png</normaloff>assets/process.png</iconset>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>70</width>
+      <height>70</height>
+     </size>
+    </property>
+    <property name="autoDefault">
+     <bool>false</bool>
     </property>
    </widget>
    <widget class="QPushButton" name="save">
     <property name="geometry">
      <rect>
-      <x>180</x>
-      <y>400</y>
+      <x>10</x>
+      <y>320</y>
       <width>381</width>
       <height>91</height>
      </rect>
     </property>
     <property name="text">
-     <string>Save</string>
+     <string/>
+    </property>
+    <property name="icon">
+     <iconset>
+      <normaloff>assets/save.png</normaloff>assets/save.png</iconset>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>70</width>
+      <height>70</height>
+     </size>
+    </property>
+    <property name="autoDefault">
+     <bool>false</bool>
     </property>
    </widget>
    <widget class="QLineEdit" name="description">
     <property name="geometry">
      <rect>
-      <x>180</x>
+      <x>10</x>
       <y>130</y>
       <width>381</width>
       <height>51</height>
@@ -128,31 +148,73 @@
    <widget class="QLabel" name="message">
     <property name="geometry">
      <rect>
-      <x>190</x>
-      <y>290</y>
-      <width>361</width>
-      <height>91</height>
+      <x>10</x>
+      <y>270</y>
+      <width>371</width>
+      <height>61</height>
      </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">font: 75 12pt &quot;MS Shell Dlg 2&quot;;</string>
     </property>
     <property name="text">
      <string>TextLabel</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label">
+    <property name="geometry">
+     <rect>
+      <x>70</x>
+      <y>260</y>
+      <width>81</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>take pictures</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_4">
+    <property name="geometry">
+     <rect>
+      <x>270</x>
+      <y>260</y>
+      <width>81</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>train data</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_5">
+    <property name="geometry">
+     <rect>
+      <x>190</x>
+      <y>410</y>
+      <width>31</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>save</string>
     </property>
    </widget>
   </widget>
   <widget class="QLabel" name="label_2">
    <property name="geometry">
     <rect>
-     <x>760</x>
-     <y>130</y>
-     <width>241</width>
-     <height>311</height>
+     <x>620</x>
+     <y>190</y>
+     <width>411</width>
+     <height>431</height>
     </rect>
    </property>
    <property name="text">
     <string/>
    </property>
    <property name="pixmap">
-    <pixmap>assets/add-user.png</pixmap>
+    <pixmap>assets/theafe.png</pixmap>
    </property>
    <property name="scaledContents">
     <bool>true</bool>
@@ -161,43 +223,107 @@
   <widget class="QLabel" name="label_3">
    <property name="geometry">
     <rect>
-     <x>760</x>
+     <x>380</x>
      <y>0</y>
-     <width>281</width>
-     <height>131</height>
+     <width>651</width>
+     <height>91</height>
     </rect>
    </property>
    <property name="autoFillBackground">
     <bool>false</bool>
    </property>
    <property name="styleSheet">
-    <string notr="true">font: 75 14pt &quot;MS Shell Dlg 2&quot;;</string>
+    <string notr="true">font: 75 14pt &quot;MS Shell Dlg 2&quot;;
+background-color: rgb(255, 255, 255);
+
+border:2px solid rgb(243, 255, 225)</string>
    </property>
    <property name="text">
-    <string>12:45AM</string>
+    <string>Add New Person</string>
    </property>
    <property name="alignment">
     <set>Qt::AlignCenter</set>
    </property>
   </widget>
-  <widget class="QPushButton" name="home">
+  <widget class="QFrame" name="frame_2">
    <property name="geometry">
     <rect>
      <x>0</x>
-     <y>30</y>
-     <width>181</width>
-     <height>61</height>
+     <y>0</y>
+     <width>371</width>
+     <height>91</height>
     </rect>
    </property>
-   <property name="text">
-    <string>back to home</string>
+   <property name="frameShape">
+    <enum>QFrame::StyledPanel</enum>
    </property>
-   <property name="iconSize">
-    <size>
-     <width>200</width>
-     <height>200</height>
-    </size>
+   <property name="frameShadow">
+    <enum>QFrame::Raised</enum>
    </property>
+   <widget class="QPushButton" name="listScr">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>180</x>
+      <y>0</y>
+      <width>191</width>
+      <height>91</height>
+     </rect>
+    </property>
+    <property name="autoFillBackground">
+     <bool>false</bool>
+    </property>
+    <property name="styleSheet">
+     <string notr="true"/>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="icon">
+     <iconset>
+      <normaloff>assets/kayit2.png</normaloff>assets/kayit2.png</iconset>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>70</width>
+      <height>70</height>
+     </size>
+    </property>
+    <property name="autoDefault">
+     <bool>false</bool>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="home">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>181</width>
+      <height>91</height>
+     </rect>
+    </property>
+    <property name="autoFillBackground">
+     <bool>false</bool>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="icon">
+     <iconset>
+      <normaloff>assets/home.png</normaloff>assets/home.png</iconset>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>70</width>
+      <height>70</height>
+     </size>
+    </property>
+    <property name="autoDefault">
+     <bool>false</bool>
+    </property>
+   </widget>
   </widget>
  </widget>
  <resources/>
